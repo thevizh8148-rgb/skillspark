@@ -1,0 +1,1326 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<!-- In the <head> section -->
+<meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=5.0">
+<meta name="apple-mobile-web-app-capable" content="yes">
+<meta name="apple-mobile-web-app-status-bar-style" content="black-translucent">
+<title>SkillSpark</title>
+
+<style>
+*{
+    margin:0;
+    padding:0;
+    box-sizing:border-box;
+    font-family:Arial,sans-serif;
+}
+
+body{
+    background:#f3f4f8;
+    color:#222;
+}
+
+.app{
+    width:100%;
+    max-width:430px;
+    min-height:100vh;
+    margin:auto;
+    background:white;
+    box-shadow:0 0 25px #ddd;
+}
+
+.screen{
+    display:none;
+    min-height:100vh;
+    padding:25px 20px 100px;
+}
+
+.screen.active{
+    display:block;
+}
+
+.logo{
+    color:#5b4bdb;
+    font-size:30px;
+    font-weight:bold;
+}
+
+.small{
+    color:#777;
+    font-size:14px;
+}
+
+h1{
+    margin:18px 0 7px;
+    font-size:28px;
+}
+
+h2{
+    margin:12px 0;
+}
+
+button{
+    width:100%;
+    border:none;
+    padding:15px;
+    border-radius:12px;
+    background:#5b4bdb;
+    color:white;
+    font-size:16px;
+    font-weight:bold;
+    cursor:pointer;
+}
+
+button:disabled{
+    background:#ccc;
+}
+
+.back{
+    background:none;
+    color:#555;
+    width:auto;
+    padding:5px 0;
+}
+
+.hero{
+    text-align:center;
+    padding-top:110px;
+}
+
+.hero .logo{
+    font-size:42px;
+}
+
+.hero p{
+    color:#666;
+    line-height:1.6;
+    margin:18px 0 28px;
+}
+
+.skills{
+    display:grid;
+    grid-template-columns:1fr 1fr;
+    gap:12px;
+    margin:25px 0;
+}
+
+.skill{
+    border:2px solid #eee;
+    padding:18px 10px;
+    border-radius:15px;
+    cursor:pointer;
+}
+
+.skill.selected{
+    border-color:#5b4bdb;
+    background:#f0eeff;
+}
+
+.icon{
+    font-size:28px;
+    margin-bottom:8px;
+}
+
+.card{
+    background:white;
+    border:1px solid #eee;
+    border-radius:16px;
+    padding:20px;
+    margin:15px 0;
+    box-shadow:0 5px 18px rgba(0,0,0,.06);
+}
+
+.progress-box{
+    background:#f0eeff;
+    padding:20px;
+    border-radius:16px;
+    margin:20px 0;
+}
+
+.progress{
+    width:100%;
+    height:10px;
+    background:#ddd;
+    border-radius:10px;
+    margin-top:12px;
+    overflow:hidden;
+}
+
+.progress-fill{
+    height:100%;
+    width:0%;
+    background:#5b4bdb;
+    transition:.5s;
+}
+
+.stats{
+    display:grid;
+    grid-template-columns:1fr 1fr;
+    gap:12px;
+}
+
+.stat{
+    background:#f7f7f7;
+    padding:18px;
+    border-radius:14px;
+}
+
+.question-count{
+    text-align:right;
+    color:#5b4bdb;
+    font-weight:bold;
+}
+
+.question{
+    background:#f7f7f7;
+    padding:20px;
+    border-radius:16px;
+    margin:20px 0;
+}
+
+.option{
+    background:white;
+    color:#222;
+    border:1px solid #ddd;
+    text-align:left;
+    margin-top:10px;
+}
+
+.option.correct{
+    background:#dff6e5;
+    border-color:#32a852;
+}
+
+.option.wrong{
+    background:#ffe2e2;
+    border-color:#e04444;
+}
+
+.result{
+    text-align:center;
+    padding:30px 20px;
+}
+
+.score{
+    font-size:55px;
+    font-weight:bold;
+    color:#5b4bdb;
+    margin:15px;
+}
+
+.success{
+    background:#e7f8ed;
+    color:#218642;
+    padding:14px;
+    border-radius:10px;
+    margin:15px 0;
+}
+
+.badge{
+    display:inline-block;
+    padding:10px 14px;
+    border-radius:20px;
+    background:#eee;
+    margin:5px;
+    font-size:13px;
+}
+
+.nav{
+    position:fixed;
+    bottom:0;
+    left:50%;
+    transform:translateX(-50%);
+    max-width:430px;
+    width:100%;
+    display:flex;
+    background:white;
+    border-top:1px solid #ddd;
+    padding:8px;
+    z-index:10;
+}
+
+.nav button{
+    background:none;
+    color:#666;
+    font-size:13px;
+    padding:8px;
+}
+</style>
+</head>
+
+<body>
+
+<div class="app">
+
+<!-- ================= WELCOME ================= -->
+
+<section id="welcome" class="screen active">
+
+    <div class="hero">
+
+        <div class="logo">SkillSpark</div>
+
+        <p>
+            Learn • Practise • Prove • Grow
+        </p>
+
+        <p>
+            Turn your skills into real experience.
+            Complete practical tasks and prove your ability.
+        </p>
+
+        <button onclick="showScreen('skills')">
+            GET STARTED
+        </button>
+
+    </div>
+
+</section>
+
+
+<!-- ================= SKILLS ================= -->
+
+<section id="skills" class="screen">
+
+    <button class="back" onclick="showScreen('welcome')">
+        ← Back
+    </button>
+
+    <h1>Choose Your Skill</h1>
+
+    <p class="small">
+        Select a path to start
+    </p>
+
+    <div class="skills">
+
+        <div class="skill"
+             onclick="selectSkill('Graphic Design',this)">
+            <div class="icon">🎨</div>
+            <h3>Graphic Design</h3>
+            <p class="small"></p>
+        </div>
+
+        <div class="skill"
+             onclick="selectSkill('Digital Marketing',this)">
+            <div class="icon">📢</div>
+            <h3>Digital Marketing</h3>
+            <p class="small"></p>
+        </div>
+
+        <div class="skill"
+             onclick="selectSkill('Content Creation',this)">
+            <div class="icon">✍️</div>
+            <h3>Content Creation</h3>
+            <p class="small"></p>
+        </div>
+
+        <div class="skill"
+             onclick="selectSkill('Coding',this)">
+            <div class="icon">💻</div>
+            <h3>Coding</h3>
+            <p class="small"></p>
+        </div>
+
+        <div class="skill"
+             onclick="selectSkill('Business Skills',this)">
+            <div class="icon">💼</div>
+            <h3>Business Skills</h3>
+            <p class="small"></p>
+        </div>
+
+        <div class="skill"
+             onclick="selectSkill('Communication',this)">
+            <div class="icon">🗣️</div>
+            <h3>Communication</h3>
+            <p class="small"></p>
+        </div>
+
+    </div>
+
+    <button id="continueBtn"
+            onclick="startQuiz()"
+            disabled>
+        CONTINUE
+    </button>
+
+</section>
+
+
+<!-- ================= DASHBOARD ================= -->
+
+<section id="dashboard" class="screen">
+
+    <div class="logo">SkillSpark</div>
+
+    <h1>Dashboard</h1>
+
+    <p class="small">
+        Your learning progress
+    </p>
+
+    <div class="progress-box">
+
+        <p>Overall Progress</p>
+
+        <h1 id="progressText">0%</h1>
+
+        <div class="progress">
+            <div id="progressFill"
+                 class="progress-fill">
+            </div>
+        </div>
+
+    </div>
+
+    <div class="stats">
+
+        <div class="stat">
+            <h2 id="scoreText">0</h2>
+            <p class="small">Points</p>
+        </div>
+
+        <div class="stat">
+            <h2 id="tasksText">0</h2>
+            <p class="small">Tasks Completed</p>
+        </div>
+
+    </div>
+
+    <div class="card">
+
+        <h3 id="selectedSkillText">
+            No skill selected
+        </h3>
+
+        <p id="taskDescription"
+           class="small">
+            Choose a skill to begin.
+        </p>
+
+        <br>
+
+        <button onclick="startQuiz()">
+            START TASK
+        </button>
+
+    </div>
+
+</section>
+
+
+<!-- ================= QUIZ ================= -->
+
+<section id="quiz" class="screen">
+
+    <button class="back"
+            onclick="showScreen('dashboard')">
+        ← Dashboard
+    </button>
+
+    <div class="question-count">
+        Question <span id="currentQuestion">1</span>/5
+    </div>
+
+    <h1 id="quizTitle">
+        Skill Challenge
+    </h1>
+
+    <p id="quizDescription"
+       class="small">
+    </p>
+
+    <div class="progress">
+        <div id="quizProgress"
+             class="progress-fill">
+        </div>
+    </div>
+
+    <div class="question">
+
+        <h3 id="questionText">
+        </h3>
+
+        <div id="options">
+        </div>
+
+    </div>
+
+    <div id="feedback">
+    </div>
+
+</section>
+
+
+<!-- ================= RESULT ================= -->
+
+<section id="result" class="screen">
+
+    <div class="result">
+
+        <div style="font-size:50px;">
+            🎉
+        </div>
+
+        <h1>Task Completed!</h1>
+
+        <p class="small">
+            You completed all 5 questions.
+        </p>
+
+        <div class="score"
+             id="finalScore">
+            0/100
+        </div>
+
+        <div class="card">
+
+            <p>
+                Correct Answers:
+                <strong id="correctAnswers">
+                    0/5
+                </strong>
+            </p>
+
+            <br>
+
+            <p>
+                Skill:
+                <strong id="resultSkill">
+                </strong>
+            </p>
+
+        </div>
+
+        <button onclick="showScreen('submission')">
+            SUBMIT TASK
+        </button>
+
+    </div>
+
+</section>
+
+
+<!-- ================= SUBMISSION ================= -->
+
+<section id="submission" class="screen">
+
+    <button class="back"
+            onclick="showScreen('result')">
+        ← Back
+    </button>
+
+    <h1>Submit Task</h1>
+
+    <p class="small">
+        Review your completed task
+    </p>
+
+    <div class="card">
+
+        <h3 id="submitSkill">
+        </h3>
+
+        <p class="small">
+            Practical skill assessment
+        </p>
+
+        <br>
+
+        <div class="success">
+            ✓ Task completed successfully
+        </div>
+
+        <p>
+            Score:
+            <strong id="submitScore">
+                0/100
+            </strong>
+        </p>
+
+    </div>
+
+    <!-- NO UPLOAD -->
+
+    <button onclick="submitTask()">
+        SUBMIT TASK
+    </button>
+
+</section>
+
+
+<!-- ================= SUBMITTED ================= -->
+
+<section id="submitted" class="screen">
+
+    <div class="result">
+
+        <div style="font-size:55px;">
+            ✅
+        </div>
+
+        <h1>Task Submitted</h1>
+
+        <p class="small">
+            Your task has been submitted successfully.
+        </p>
+
+        <div class="success">
+            ● Submitted — Under Review
+        </div>
+
+        <br>
+
+        <button onclick="showScreen('profile')">
+            VIEW MY PROFILE
+        </button>
+
+    </div>
+
+</section>
+
+
+<!-- ================= PROFILE ================= -->
+
+<section id="profile" class="screen">
+
+    <div class="logo">SkillSpark</div>
+
+    <h1>My Skill Profile</h1>
+
+    <p class="small">
+        Your progress becomes your proof
+    </p>
+
+    <div class="card"
+         style="text-align:center;">
+
+        <p>SKILL SCORE</p>
+
+        <div class="score"
+             id="profileScore">
+            0/100
+        </div>
+
+        <h3 id="profileSkill">
+            No skill selected
+        </h3>
+
+    </div>
+
+    <div class="card">
+
+        <h3>Verified Achievements</h3>
+
+        <br>
+
+        <div id="badges">
+
+            <span class="badge">
+                No badges yet
+            </span>
+
+        </div>
+
+    </div>
+
+    <button onclick="showScreen('skills')">
+        LEARN ANOTHER SKILL
+    </button>
+
+</section>
+
+
+<!-- ================= NAVIGATION ================= -->
+
+<div class="nav">
+
+    <button onclick="showScreen('dashboard')">
+        🏠<br>Home
+    </button>
+
+    <button onclick="showScreen('skills')">
+        🎯<br>Skills
+    </button>
+
+    <button onclick="showScreen('profile')">
+        👤<br>Profile
+    </button>
+
+</div>
+
+</div>
+
+
+<script>
+
+/* ================= VARIABLES ================= */
+
+let selectedSkill = "";
+let current = 0;
+let score = 0;
+let correctCount = 0;
+let tasksDone = 0;
+
+
+/* ================= QUESTIONS ================= */
+
+const questions = {
+
+"Graphic Design":[
+
+{
+q:"Which element helps create visual hierarchy?",
+o:[
+"Proper typography and spacing",
+"Random fonts",
+"No colours",
+"Only images"
+],
+a:0
+},
+
+{
+q:"Which tool is commonly used for graphic design?",
+o:[
+"Canva",
+"Calculator",
+"Notepad",
+"Terminal"
+],
+a:0
+},
+
+{
+q:"What does typography refer to?",
+o:[
+"Arrangement of text",
+"File storage",
+"Internet speed",
+"Video editing"
+],
+a:0
+},
+
+{
+q:"Which is important in a poster?",
+o:[
+"Clear layout",
+"Random placement",
+"No alignment",
+"Unreadable text"
+],
+a:0
+},
+
+{
+q:"What improves brand consistency?",
+o:[
+"Consistent colours and fonts",
+"Different fonts everywhere",
+"No logo",
+"Random design"
+],
+a:0
+}
+
+],
+
+
+"Digital Marketing":[
+
+{
+q:"Which platform is commonly used for social media marketing?",
+o:[
+"Instagram",
+"Calculator",
+"Notepad",
+"File Manager"
+],
+a:0
+},
+
+{
+q:"What is SEO?",
+o:[
+"Search Engine Optimization",
+"Simple Email Output",
+"System Editing Option",
+"Social Entry Order"
+],
+a:0
+},
+
+{
+q:"What is a target audience?",
+o:[
+"Intended group of customers",
+"Computer hardware",
+"Website code",
+"Printer"
+],
+a:0
+},
+
+{
+q:"Which is useful for measuring website traffic?",
+o:[
+"Analytics",
+"Paint",
+"Calculator",
+"Music Player"
+],
+a:0
+},
+
+{
+q:"What is a call-to-action?",
+o:[
+"An instruction encouraging action",
+"A computer virus",
+"A password",
+"A database"
+],
+a:0
+}
+
+],
+
+
+"Content Creation":[
+
+{
+q:"What makes content engaging?",
+o:[
+"Clear message",
+"Confusing text",
+"No purpose",
+"Empty page"
+],
+a:0
+},
+
+{
+q:"What should a good headline do?",
+o:[
+"Grab attention",
+"Hide the topic",
+"Confuse readers",
+"Use random words"
+],
+a:0
+},
+
+{
+q:"Which is a type of content?",
+o:[
+"Video",
+"Keyboard",
+"Mouse",
+"CPU"
+],
+a:0
+},
+
+{
+q:"Why is proofreading important?",
+o:[
+"To remove errors",
+"To add errors",
+"To delete content",
+"To slow the website"
+],
+a:0
+},
+
+{
+q:"What is storytelling used for?",
+o:[
+"Connecting with an audience",
+"Deleting files",
+"Writing code",
+"Installing software"
+],
+a:0
+}
+
+],
+
+
+"Coding":[
+
+{
+q:"Which language creates the structure of a web page?",
+o:[
+"HTML",
+"Excel",
+"Photoshop",
+"PowerPoint"
+],
+a:0
+},
+
+{
+q:"Which language is mainly used for web page styling?",
+o:[
+"CSS",
+"SQL",
+"Python",
+"Java"
+],
+a:0
+},
+
+{
+q:"Which language adds interactivity to a web page?",
+o:[
+"JavaScript",
+"HTML",
+"CSS",
+"XML"
+],
+a:0
+},
+
+{
+q:"What does HTML stand for?",
+o:[
+"HyperText Markup Language",
+"HighText Machine Language",
+"Hyper Tool Multi Language",
+"Home Tool Markup Language"
+],
+a:0
+},
+
+{
+q:"Which symbol is commonly used for a JavaScript single-line comment?",
+o:[
+"//",
+"##",
+"<>",
+"**"
+],
+a:0
+}
+
+],
+
+
+"Business Skills":[
+
+{
+q:"What is the main purpose of a business?",
+o:[
+"Create value for customers",
+"Avoid customers",
+"Delete products",
+"Stop communication"
+],
+a:0
+},
+
+{
+q:"What is a customer?",
+o:[
+"Person who buys a product or service",
+"A computer",
+"A file",
+"A programming language"
+],
+a:0
+},
+
+{
+q:"What is marketing?",
+o:[
+"Promoting products or services",
+"Deleting products",
+"Writing code",
+"Repairing computers"
+],
+a:0
+},
+
+{
+q:"What is teamwork?",
+o:[
+"Working together toward a goal",
+"Working alone",
+"A computer process",
+"A financial report"
+],
+a:0
+},
+
+{
+q:"Why is planning important?",
+o:[
+"To achieve goals effectively",
+"To create confusion",
+"To waste time",
+"To avoid goals"
+],
+a:0
+}
+
+],
+
+
+"Communication":[
+
+{
+q:"Which is an important active listening skill?",
+o:[
+"Paying attention",
+"Interrupting",
+"Ignoring",
+"Looking away"
+],
+a:0
+},
+
+{
+q:"What is verbal communication?",
+o:[
+"Communication using words",
+"Communication using files",
+"Computer programming",
+"Drawing"
+],
+a:0
+},
+
+{
+q:"What is body language?",
+o:[
+"Non-verbal communication",
+"A programming language",
+"A database",
+"A document"
+],
+a:0
+},
+
+{
+q:"Which improves communication?",
+o:[
+"Clear expression",
+"Confusing speech",
+"Interrupting",
+"Ignoring"
+],
+a:0
+},
+
+{
+q:"What should you do when someone is speaking?",
+o:[
+"Listen carefully",
+"Interrupt immediately",
+"Ignore them",
+"Leave"
+],
+a:0
+}
+
+]
+
+};
+
+
+/* ================= SCREEN ================= */
+
+function showScreen(id){
+
+    document.querySelectorAll(".screen")
+    .forEach(s => s.classList.remove("active"));
+
+    document.getElementById(id)
+    .classList.add("active");
+
+    updateDashboard();
+    updateProfile();
+
+    window.scrollTo(0,0);
+}
+
+
+/* ================= SELECT SKILL ================= */
+
+function selectSkill(skill,element){
+
+    selectedSkill = skill;
+
+    document.querySelectorAll(".skill")
+    .forEach(s => s.classList.remove("selected"));
+
+    element.classList.add("selected");
+
+    document.getElementById("continueBtn")
+    .disabled = false;
+
+    document.getElementById("selectedSkillText")
+    .innerText = skill;
+
+    document.getElementById("taskDescription")
+    .innerText =
+        "Complete 5 questions to prove your " +
+        skill + " skills.";
+}
+
+
+/* ================= START QUIZ ================= */
+
+function startQuiz(){
+
+    if(!selectedSkill){
+        return;
+    }
+
+    current = 0;
+    score = 0;
+    correctCount = 0;
+
+    loadQuestion();
+
+    showScreen("quiz");
+}
+
+
+/* ================= LOAD QUESTION ================= */
+
+function loadQuestion(){
+
+    const data =
+        questions[selectedSkill][current];
+
+    document.getElementById("currentQuestion")
+        .innerText = current + 1;
+
+    document.getElementById("quizTitle")
+        .innerText = selectedSkill + " Challenge";
+
+    document.getElementById("quizDescription")
+        .innerText =
+        "Answer the question and continue.";
+
+    document.getElementById("questionText")
+        .innerText = data.q;
+
+    document.getElementById("quizProgress")
+        .style.width =
+        ((current + 1) / 5 * 100) + "%";
+
+    let html = "";
+
+    data.o.forEach((option,index)=>{
+
+        html += `
+        <button
+            class="option"
+            onclick="checkAnswer(${index})">
+            ${option}
+        </button>
+        `;
+
+    });
+
+    document.getElementById("options")
+        .innerHTML = html;
+
+    document.getElementById("feedback")
+        .innerHTML = "";
+}
+
+
+/* ================= CHECK ANSWER ================= */
+
+function checkAnswer(answer){
+
+    const data =
+        questions[selectedSkill][current];
+
+    const buttons =
+        document.querySelectorAll(".option");
+
+    buttons.forEach(b => b.disabled = true);
+
+    if(answer === data.a){
+
+        buttons[answer]
+            .classList.add("correct");
+
+        score += 20;
+        correctCount++;
+
+        document.getElementById("feedback")
+            .innerHTML = `
+            <div class="success">
+                ✓ Correct! +20 points
+            </div>
+            <button onclick="nextQuestion()">
+                NEXT QUESTION
+            </button>
+            `;
+
+    }else{
+
+        buttons[answer]
+            .classList.add("wrong");
+
+        buttons[data.a]
+            .classList.add("correct");
+
+        document.getElementById("feedback")
+            .innerHTML = `
+            <div class="card">
+                <strong>Incorrect!</strong>
+                <p class="small">
+                    The correct answer is highlighted.
+                </p>
+            </div>
+
+            <button onclick="nextQuestion()">
+                NEXT QUESTION
+            </button>
+            `;
+    }
+}
+
+
+/* ================= NEXT QUESTION ================= */
+
+function nextQuestion(){
+
+    current++;
+
+    if(current < 5){
+
+        loadQuestion();
+
+    }else{
+
+        showResult();
+
+    }
+}
+
+
+/* ================= RESULT ================= */
+
+function showResult(){
+
+    document.getElementById("finalScore")
+        .innerText = score + "/100";
+
+    document.getElementById("correctAnswers")
+        .innerText =
+        correctCount + "/5";
+
+    document.getElementById("resultSkill")
+        .innerText = selectedSkill;
+
+    showScreen("result");
+}
+
+
+/* ================= SUBMIT ================= */
+
+function submitTask(){
+
+    tasksDone++;
+
+    document.getElementById("submitSkill")
+        .innerText = selectedSkill;
+
+    document.getElementById("submitScore")
+        .innerText = score + "/100";
+
+    showScreen("submitted");
+}
+
+
+/* ================= DASHBOARD ================= */
+
+function updateDashboard(){
+
+    let progress = score;
+
+    document.getElementById("progressText")
+        .innerText = progress + "%";
+
+    document.getElementById("progressFill")
+        .style.width = progress + "%";
+
+    document.getElementById("scoreText")
+        .innerText = score;
+
+    document.getElementById("tasksText")
+        .innerText = tasksDone;
+}
+
+
+/* ================= PROFILE ================= */
+
+function updateProfile(){
+
+    document.getElementById("profileScore")
+        .innerText = score + "/100";
+
+    document.getElementById("profileSkill")
+        .innerText =
+        selectedSkill || "No skill selected";
+
+    let badges = "";
+
+    if(score >= 20){
+
+        badges += `
+        <span class="badge">
+            ⭐ First Challenge
+        </span>`;
+    }
+
+    if(score >= 60){
+
+        badges += `
+        <span class="badge">
+            🏆 Skilled Learner
+        </span>`;
+    }
+
+    if(score === 100){
+
+        badges += `
+        <span class="badge">
+            💯 Perfect Score
+        </span>`;
+    }
+
+    if(tasksDone > 0){
+
+        badges += `
+        <span class="badge">
+            ✅ Task Submitted
+        </span>`;
+    }
+
+    if(badges === ""){
+
+        badges =
+        `<span class="badge">
+            No badges yet
+        </span>`;
+    }
+
+    document.getElementById("badges")
+        .innerHTML = badges;
+}
+
+</script>
+
+</body>
+</html>
